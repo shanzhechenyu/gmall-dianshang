@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -19,6 +21,12 @@ public class GmallPmsApplicationTests {
 
     @Autowired
     BrandService brandService;
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
+
+    @Autowired
+    RedisTemplate<Object,Object> redisTemplateObj;
     @Test
     public void contextLoads() {
        // Product byId = productService.getById(1);
@@ -32,4 +40,21 @@ public class GmallPmsApplicationTests {
 
     }
 
+    @Test
+    public void testRedis() {
+        redisTemplate.opsForValue().set("hai","nihao");  //操作redis的string类型的
+        System.out.println("保存了数据！");
+        String hai = redisTemplate.opsForValue().get("hai");
+        System.out.println("刚才保存的值是："+hai);
+    }
+    @Test
+    public void testRedisObj() {
+
+        Brand brand = new Brand();
+        brand.setName("小熊猫");
+        redisTemplateObj.opsForValue().set("abc",brand);
+
+        Brand abc = (Brand) redisTemplateObj.opsForValue().get("abc");
+        System.out.println("刚才保存的值是："+abc.getName());
+    }
 }
